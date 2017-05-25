@@ -33,7 +33,6 @@ namespace MalAPI
         public string user_days_spent_reading;
     }
 
-
     public class MalAPI
     {
         private string GetWebDataRaw( string url )
@@ -51,7 +50,6 @@ namespace MalAPI
 
             return result;
         }
-
         private XmlDocument GetDocument(string url)
         {
             try
@@ -64,8 +62,7 @@ namespace MalAPI
             }
             catch(System.Net.WebException e)
             {
-                //Console.WriteLine(e);
-                //return null;
+                Console.WriteLine("Network exception: " + e);
             }
             return null;
         }
@@ -191,7 +188,6 @@ namespace MalAPI
             return null;
         }
 
-
         public void SetCredentials(string user, string pass)
         {
             this.user = user;
@@ -216,8 +212,30 @@ namespace MalAPI
         }
         public UserInfo GetUserInfo()
         {
-            Console.WriteLine("Not implemented");
             UserInfo info = new UserInfo();
+            XmlDocument xml = GetDocument("https://myanimelist.net/malappinfo.php?u=" + this.user + "&status=all&type=anime");
+            if (xml != null)
+            {
+                info.userid = xml.SelectSingleNode("/myanimelist/myinfo/user_id").InnerText;
+                info.username = xml.SelectSingleNode("/myanimelist/myinfo/user_name").InnerText;
+
+                info.user_watching_anime = xml.SelectSingleNode("/myanimelist/myinfo/user_watching").InnerText;
+                info.user_completed_anime = xml.SelectSingleNode("/myanimelist/myinfo/user_completed").InnerText;
+                info.user_onhold_anime = xml.SelectSingleNode("/myanimelist/myinfo/user_onhold").InnerText;
+                info.user_dropped_anime = xml.SelectSingleNode("/myanimelist/myinfo/user_dropped").InnerText;
+                info.user_plantowatch_anime = xml.SelectSingleNode("/myanimelist/myinfo/user_plantowatch").InnerText;
+                info.user_days_spent_watching = xml.SelectSingleNode("/myanimelist/myinfo/user_days_spent_watching").InnerText;
+            }
+            xml = GetDocument("https://myanimelist.net/malappinfo.php?u=" + this.user + "&status=all&type=manga");
+            if (xml != null)
+            {
+                info.user_reading_manga = xml.SelectSingleNode("/myanimelist/myinfo/user_reading").InnerText;
+                info.user_completed_manga = xml.SelectSingleNode("/myanimelist/myinfo/user_completed").InnerText;
+                info.user_onhold_manga = xml.SelectSingleNode("/myanimelist/myinfo/user_onhold").InnerText;
+                info.user_dropped_manga = xml.SelectSingleNode("/myanimelist/myinfo/user_dropped").InnerText;
+                info.user_plantoread_manga = xml.SelectSingleNode("/myanimelist/myinfo/user_plantoread").InnerText;
+                info.user_days_spent_reading = xml.SelectSingleNode("/myanimelist/myinfo/user_days_spent_watching").InnerText;
+            }
 
             return info;
         }
@@ -226,17 +244,14 @@ namespace MalAPI
         {
             return SearchGeneric(query, "anime");
         }
-
         public List<Entry> SearchManga(string query)
         {
             return SearchGeneric(query, "manga");
         }
-
         public List<ProgressEntry> GetUserListAnime()
         {
             return GetUserListGeneric("anime");
         }
-
         public List<ProgressEntry> GetUserListManga()
         {
             return GetUserListGeneric("manga");
