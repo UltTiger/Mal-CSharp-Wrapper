@@ -13,6 +13,8 @@ namespace MalCL
         {
             MalAPI.MalAPI api = new MalAPI.MalAPI();
             Console.WriteLine(api.ToString());
+
+            Console.WriteLine(api.GetWebDataRaw("http://www.google.com/"));
         }
     }
 }
