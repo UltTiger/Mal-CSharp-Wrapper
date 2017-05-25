@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using System.IO;
+using System.Xml;
 
 namespace MalAPI
 {
@@ -35,10 +36,12 @@ namespace MalAPI
 
     public class MalAPI
     {
-        public string GetWebDataRaw( string url )
+        private string GetWebDataRaw( string url )
         {
             WebClient client = new WebClient();
             client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
+            client.UseDefaultCredentials = true;
+            client.Credentials = new NetworkCredential(user, pass);
 
             Stream data = client.OpenRead( url );
             StreamReader reader = new StreamReader(data);
@@ -49,6 +52,23 @@ namespace MalAPI
             return result;
         }
 
+        private XmlDocument GetDocument(string url)
+        {
+            try
+            {
+                XmlDocument xml = new XmlDocument();
+                xml.LoadXml( GetWebDataRaw( url ) );
+
+                return xml;
+
+            }
+            catch(System.Net.WebException e)
+            {
+                //Console.WriteLine(e);
+                //return null;
+            }
+            return null;
+        }
 
         private string user, pass;
 
@@ -74,7 +94,18 @@ namespace MalAPI
 
         public bool ValidateUser()
         {
-            Console.WriteLine("Not implemented");
+            XmlDocument xml = GetDocument("https://myanimelist.net/api/account/verify_credentials.xml");
+
+            if (xml != null)
+            {
+                string userstr = xml.SelectSingleNode("/user/username").InnerText;
+
+                if (userstr == user)
+                {
+                    return true;
+                }
+            }
+
             return false;
         }
         public UserInfo GetUserInfo()
