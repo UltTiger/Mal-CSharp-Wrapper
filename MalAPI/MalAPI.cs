@@ -33,6 +33,18 @@ namespace MalAPI
         public string user_days_spent_watching;
         public string user_days_spent_reading;
     }
+    public struct AnimeValues
+    {
+        public int id;
+
+        public int episode, status, score;
+        public string storage_type, storage_value;
+        public int times_rewatched, rewatch_value;
+        public string date_start, date_finish;
+        public int priority;
+        public string enable_discussion, enable_rewatching;
+        public string comments, tags;
+    }
 
     public class MalAPI
     {
@@ -46,6 +58,9 @@ namespace MalAPI
             {
                 WebClient client = new WebClient();
                 client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
+                client.Headers.Add("Accept-Language", " en-US");
+                client.Headers.Add("Accept", " text/html, application/xhtml+xml, */*");
+
                 client.UseDefaultCredentials = true;
                 client.Credentials = new NetworkCredential(user, pass);
 
@@ -206,6 +221,72 @@ namespace MalAPI
             return null;
         }
 
+        private XmlDocument EncodeAnimeUpdateEntry( AnimeValues entry )
+        {
+            XmlDocument xml = new XmlDocument();
+
+            XmlNode master = xml.CreateElement("entry");
+            xml.AppendChild(master);
+
+            XmlNode elm = xml.CreateElement("episode");
+            elm.InnerText = entry.episode.ToString();
+            master.AppendChild(elm);
+
+            elm = xml.CreateElement("status");
+            elm.InnerText = entry.status.ToString();
+            master.AppendChild(elm);
+
+            elm = xml.CreateElement("score");
+            elm.InnerText = entry.score.ToString();
+            master.AppendChild(elm);
+
+            elm = xml.CreateElement("storage_type");
+            elm.InnerText = entry.storage_type;
+            master.AppendChild(elm);
+
+            elm = xml.CreateElement("storage_value");
+            elm.InnerText = entry.storage_value;
+            master.AppendChild(elm);
+
+            elm = xml.CreateElement("times_rewatched");
+            elm.InnerText = entry.times_rewatched.ToString();
+            master.AppendChild(elm);
+
+            elm = xml.CreateElement("rewatch_value");
+            elm.InnerText = entry.rewatch_value.ToString();
+            master.AppendChild(elm);
+
+            elm = xml.CreateElement("date_start");
+            elm.InnerText = entry.date_start;
+            master.AppendChild(elm);
+
+            elm = xml.CreateElement("date_finish");
+            elm.InnerText = entry.date_finish;
+            master.AppendChild(elm);
+
+            elm = xml.CreateElement("priority");
+            elm.InnerText = entry.priority.ToString();
+            master.AppendChild(elm);
+
+            elm = xml.CreateElement("enable_discussion");
+            elm.InnerText = entry.enable_discussion;
+            master.AppendChild(elm);
+
+            elm = xml.CreateElement("enable_rewatching");
+            elm.InnerText = entry.enable_rewatching;
+            master.AppendChild(elm);
+
+            elm = xml.CreateElement("comments");
+            elm.InnerText = entry.comments;
+            master.AppendChild(elm);
+
+            elm = xml.CreateElement("tags");
+            elm.InnerText = entry.tags;
+            master.AppendChild(elm);
+
+            return xml;
+        }
+
         //Public
         public void SetCredentials(string user, string pass)
         {
@@ -276,16 +357,31 @@ namespace MalAPI
             return GetUserListGeneric("manga");
         }
 
-        public bool AddAnime()
+        public bool AddAnime( AnimeValues entry )
         {
+
+            /*StringWriter sw = new StringWriter();
+            XmlTextWriter tx = new XmlTextWriter(sw);
+            EncodeAnimeUpdateEntry(entry).WriteTo(tx);
+
+            string encoderes = sw.ToString();*/
+
+            //Console.WriteLine( "Anime Entry: " + encoderes + " | " + EncodeAnimeUpdateEntry(entry) );
+            //return false;
+
+            //Console.WriteLine( GetWebData("https://myanimelist.net/api/animelist/add/32995.xml") );
+            //return false;
+
             NameValueCollection post = new NameValueCollection();
 
-            int id = 32995;
+            post.Add("id", entry.id.ToString() );
+            post.Add("data", EncodeAnimeUpdateEntry(entry).OuterXml );
 
-            post.Add("id", id.ToString());
-            post.Add("data", "");
+            
 
-            string str = GetWebData("https://myanimelist.net/api/animelist/add/" + id.ToString() + ".xml", post);
+            //post.Add("data", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<entry>\n<episode>1</episode>\n<status>1</status>\n</entry>");
+
+            string str = GetWebData("https://myanimelist.net/api/animelist/add/" + entry.id.ToString() + ".xml", post);
             return str == "Created";
         }
         void UpdateAnime() { }

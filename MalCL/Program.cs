@@ -22,7 +22,7 @@ namespace MalCL
 
             Console.WriteLine("user correct: " + api.ValidateUser() );
 
-            List<MalAPI.Entry> data = api.SearchAnime("bleach");
+            List<Entry> data = api.SearchAnime("bleach");
 
             if (data.Count > 0)
                 Console.WriteLine("first name: " + data[0].title);
@@ -37,7 +37,14 @@ namespace MalCL
             Console.WriteLine("user: " + info.username + " watching: " + info.user_watching_anime + " & reading: " + info.user_reading_manga);
 
             //Adds
-            api.AddAnime();
+
+            AnimeValues anime = new AnimeValues();
+            anime.id = 32995;
+            anime.episode = 1;
+            anime.status = 1;
+            anime.score = 5;
+
+            api.AddAnime( anime );
 
             Console.WriteLine("Program finished!");
         }
