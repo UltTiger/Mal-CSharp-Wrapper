@@ -5,6 +5,11 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MalAPI", "MalAPI\MalAPI.csproj", "{A20ECE44-D9C4-4BA5-A85F-D2D02CA51E7E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MalCL", "MalCL\MalCL.csproj", "{05A0B5B8-5F25-488D-B24B-712E65CA2DF8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A20ECE44-D9C4-4BA5-A85F-D2D02CA51E7E} = {A20ECE44-D9C4-4BA5-A85F-D2D02CA51E7E}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +20,10 @@ Global
 		{A20ECE44-D9C4-4BA5-A85F-D2D02CA51E7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A20ECE44-D9C4-4BA5-A85F-D2D02CA51E7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A20ECE44-D9C4-4BA5-A85F-D2D02CA51E7E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05A0B5B8-5F25-488D-B24B-712E65CA2DF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05A0B5B8-5F25-488D-B24B-712E65CA2DF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05A0B5B8-5F25-488D-B24B-712E65CA2DF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05A0B5B8-5F25-488D-B24B-712E65CA2DF8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -8,6 +8,9 @@ namespace MalAPI
 {
     public class MalAPI
     {
-
+        public override string ToString()
+        {
+            return "MyAnimeList (unofficial) Web API";
+        }
     }
 }
