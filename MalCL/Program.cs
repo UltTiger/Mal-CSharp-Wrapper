@@ -20,8 +20,23 @@ namespace MalCL
             string[] creds = File.ReadAllLines("../../../debugCreds.txt");
             api.SetCredentials(creds[0], creds[1]);
 
-            bool val = api.ValidateUser();
-            Console.WriteLine("User valid: " + val);
+            Console.WriteLine("user correct: " + api.ValidateUser() );
+
+            List<MalAPI.Entry> data = api.SearchAnime("bleach");
+
+            if (data.Count > 0)
+                Console.WriteLine("first name: " + data[0].title);
+
+            List<ProgressEntry> watchData = api.GetUserListAnime();
+            if (watchData.Count > 0)
+                Console.WriteLine("first anime: " + watchData[0].title + " status: " + watchData[0].status + " watched: " + watchData[0].my_watched_episodes + "/" + watchData[0].episodes);
+            
+            Console.WriteLine("Profile snap: ");
+
+            UserInfo info = api.GetUserInfo();
+            Console.WriteLine("user: " + info.username + " watching: " + info.user_watching_anime + " & reading: " + info.user_reading_manga);
+            
+            Console.WriteLine("Program finished!");
         }
     }
 }
