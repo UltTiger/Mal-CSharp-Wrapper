@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Net;
 using System.IO;
 using System.Xml;
+using System.Collections.Specialized;
 
 namespace MalAPI
 {
@@ -35,39 +36,56 @@ namespace MalAPI
 
     public class MalAPI
     {
-        private string GetWebDataRaw( string url )
+        //Vars
+        private string user, pass;
+
+        //Private
+        private string GetWebData( string url, NameValueCollection postData = null )
         {
-            WebClient client = new WebClient();
-            client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
-            client.UseDefaultCredentials = true;
-            client.Credentials = new NetworkCredential(user, pass);
+            try
+            {
+                WebClient client = new WebClient();
+                client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
+                client.UseDefaultCredentials = true;
+                client.Credentials = new NetworkCredential(user, pass);
 
-            Stream data = client.OpenRead( url );
-            StreamReader reader = new StreamReader(data);
-            string result = reader.ReadToEnd();
-            data.Close();
-            reader.Close();
+                string result;
+                if (postData == null)
+                {
+                    Stream data = client.OpenRead(url);
+                    StreamReader reader = new StreamReader(data);
+                    result = reader.ReadToEnd();
+                    data.Close();
+                    reader.Close();
+                }
+                else
+                {
+                    result = Encoding.UTF8.GetString(client.UploadValues(url, "POST", postData));
+                }
 
-            return result;
+                return result;
+            }
+            catch (System.Net.WebException e)
+            {
+                Console.WriteLine("Network exception ("+url+"): " + e);
+            }
+            return null;
         }
-        private XmlDocument GetDocument(string url)
+        private XmlDocument GetDocument(string url, NameValueCollection postData = null)
         {
             try
             {
                 XmlDocument xml = new XmlDocument();
-                xml.LoadXml( GetWebDataRaw( url ) );
+                xml.LoadXml(GetWebData(url, postData));
 
                 return xml;
-
             }
-            catch(System.Net.WebException e)
+            catch( XmlException e)
             {
-                Console.WriteLine("Network exception: " + e);
+                Console.WriteLine("XML exception ("+url+"): " + e);
             }
             return null;
         }
-
-        private string user, pass;
 
         private List<Entry> SearchGeneric(string query, string type)
         {
@@ -188,6 +206,7 @@ namespace MalAPI
             return null;
         }
 
+        //Public
         public void SetCredentials(string user, string pass)
         {
             this.user = user;
@@ -257,7 +276,18 @@ namespace MalAPI
             return GetUserListGeneric("manga");
         }
 
-        void AddAnime() { }
+        public bool AddAnime()
+        {
+            NameValueCollection post = new NameValueCollection();
+
+            int id = 32995;
+
+            post.Add("id", id.ToString());
+            post.Add("data", "");
+
+            string str = GetWebData("https://myanimelist.net/api/animelist/add/" + id.ToString() + ".xml", post);
+            return str == "Created";
+        }
         void UpdateAnime() { }
         void DeleteAnime() { }
 
@@ -265,6 +295,7 @@ namespace MalAPI
         void UpdateManga() { }
         void DeleteManga() { }
 
+        //Meta
         public override string ToString()
         {
             return "MyAnimeList (unofficial) Web API";

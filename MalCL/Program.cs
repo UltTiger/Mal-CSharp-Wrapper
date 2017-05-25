@@ -35,7 +35,10 @@ namespace MalCL
 
             UserInfo info = api.GetUserInfo();
             Console.WriteLine("user: " + info.username + " watching: " + info.user_watching_anime + " & reading: " + info.user_reading_manga);
-            
+
+            //Adds
+            api.AddAnime();
+
             Console.WriteLine("Program finished!");
         }
     }
