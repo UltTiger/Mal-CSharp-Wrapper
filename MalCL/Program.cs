@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace MalCL
 {
@@ -16,7 +17,8 @@ namespace MalCL
 
             //Console.WriteLine(api.GetWebDataRaw("http://www.google.com/"));
 
-            
+            string[] creds = File.ReadAllLines("../../../debugCreds.txt");
+            api.SetCredentials(creds[0], creds[1]);
 
             bool val = api.ValidateUser();
             Console.WriteLine("User valid: " + val);
