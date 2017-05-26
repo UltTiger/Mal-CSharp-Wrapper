@@ -1,9 +1,6 @@
 ﻿using MalAPI;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 
 namespace MalCL
@@ -40,11 +37,13 @@ namespace MalCL
 
             AnimeValues anime = new AnimeValues();
             anime.id = 32995;
-            anime.episode = 1;
+            anime.episode = 2;
             anime.status = 1;
-            anime.score = 5;
+            anime.score = 7;
 
-            api.AddAnime( anime );
+            //api.AddAnime( anime );
+            //api.UpdateAnime(anime);
+            //api.DeleteAnime(32995);
 
             Console.WriteLine("Program finished!");
         }

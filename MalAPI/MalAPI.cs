@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Net;
 using System.IO;
 using System.Xml;
@@ -42,8 +40,19 @@ namespace MalAPI
         public int times_rewatched, rewatch_value;
         public string date_start, date_finish;
         public int priority;
-        public string enable_discussion, enable_rewatching;
+        public int enable_discussion, enable_rewatching;
         public string comments, tags;
+    }
+    public struct MangaValues
+    {
+        public int id;
+
+        public int chapter, volume, status, score, times_reread, reread_value;
+        public string date_start, date_finish;
+        public int priority;
+        public int enable_discussion, enable_rereading;
+        public string comments, scan_group, tags;
+        public int retail_volumes;
     }
 
     public class MalAPI
@@ -269,15 +278,84 @@ namespace MalAPI
             master.AppendChild(elm);
 
             elm = xml.CreateElement("enable_discussion");
-            elm.InnerText = entry.enable_discussion;
+            elm.InnerText = entry.enable_discussion.ToString();
             master.AppendChild(elm);
 
             elm = xml.CreateElement("enable_rewatching");
-            elm.InnerText = entry.enable_rewatching;
+            elm.InnerText = entry.enable_rewatching.ToString();
             master.AppendChild(elm);
 
             elm = xml.CreateElement("comments");
             elm.InnerText = entry.comments;
+            master.AppendChild(elm);
+
+            elm = xml.CreateElement("tags");
+            elm.InnerText = entry.tags;
+            master.AppendChild(elm);
+
+            return xml;
+        }
+        private XmlDocument EncodeMangaUpdateEntry(MangaValues entry)
+        {
+            XmlDocument xml = new XmlDocument();
+
+            XmlNode master = xml.CreateElement("entry");
+            xml.AppendChild(master);
+
+            XmlNode elm = xml.CreateElement("chapter");
+            elm.InnerText = entry.chapter.ToString();
+            master.AppendChild(elm);
+
+            elm = xml.CreateElement("volume");
+            elm.InnerText = entry.volume.ToString();
+            master.AppendChild(elm);
+
+            elm = xml.CreateElement("status");
+            elm.InnerText = entry.status.ToString();
+            master.AppendChild(elm);
+
+            elm = xml.CreateElement("score");
+            elm.InnerText = entry.score.ToString();
+            master.AppendChild(elm);
+
+            elm = xml.CreateElement("times_reread");
+            elm.InnerText = entry.times_reread.ToString();
+            master.AppendChild(elm);
+
+            elm = xml.CreateElement("reread_value");
+            elm.InnerText = entry.reread_value.ToString();
+            master.AppendChild(elm);
+
+            elm = xml.CreateElement("date_start");
+            elm.InnerText = entry.date_start;
+            master.AppendChild(elm);
+
+            elm = xml.CreateElement("date_finish");
+            elm.InnerText = entry.date_finish;
+            master.AppendChild(elm);
+
+            elm = xml.CreateElement("priority");
+            elm.InnerText = entry.priority.ToString();
+            master.AppendChild(elm);
+
+            elm = xml.CreateElement("enable_discussion");
+            elm.InnerText = entry.enable_discussion.ToString();
+            master.AppendChild(elm);
+
+            elm = xml.CreateElement("enable_rereading");
+            elm.InnerText = entry.enable_rereading.ToString();
+            master.AppendChild(elm);
+
+            elm = xml.CreateElement("comments");
+            elm.InnerText = entry.comments;
+            master.AppendChild(elm);
+
+            elm = xml.CreateElement("scan_group");
+            elm.InnerText = entry.scan_group;
+            master.AppendChild(elm);
+
+            elm = xml.CreateElement("retail_volumes");
+            elm.InnerText = entry.retail_volumes.ToString();
             master.AppendChild(elm);
 
             elm = xml.CreateElement("tags");
@@ -359,42 +437,68 @@ namespace MalAPI
 
         public bool AddAnime( AnimeValues entry )
         {
-
-            /*StringWriter sw = new StringWriter();
-            XmlTextWriter tx = new XmlTextWriter(sw);
-            EncodeAnimeUpdateEntry(entry).WriteTo(tx);
-
-            string encoderes = sw.ToString();*/
-
-            //Console.WriteLine( "Anime Entry: " + encoderes + " | " + EncodeAnimeUpdateEntry(entry) );
-            //return false;
-
-            //Console.WriteLine( GetWebData("https://myanimelist.net/api/animelist/add/32995.xml") );
-            //return false;
-
             NameValueCollection post = new NameValueCollection();
 
             post.Add("id", entry.id.ToString() );
             post.Add("data", EncodeAnimeUpdateEntry(entry).OuterXml );
 
-            
-
-            //post.Add("data", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<entry>\n<episode>1</episode>\n<status>1</status>\n</entry>");
-
             string str = GetWebData("https://myanimelist.net/api/animelist/add/" + entry.id.ToString() + ".xml", post);
             return str == "Created";
         }
-        void UpdateAnime() { }
-        void DeleteAnime() { }
+        public bool UpdateAnime(AnimeValues entry)
+        {
+            NameValueCollection post = new NameValueCollection();
 
-        void AddManga() { }
-        void UpdateManga() { }
-        void DeleteManga() { }
+            post.Add("id", entry.id.ToString());
+            post.Add("data", EncodeAnimeUpdateEntry(entry).OuterXml);
+
+            string str = GetWebData("https://myanimelist.net/api/animelist/update/" + entry.id.ToString() + ".xml", post);
+            return str == "Updated";
+        }
+        public bool DeleteAnime( int id )
+        {
+            NameValueCollection post = new NameValueCollection();
+
+            post.Add("id", id.ToString());
+
+            string str = GetWebData("https://myanimelist.net/api/animelist/delete/" + id.ToString() + ".xml", post);
+            return str == "Deleted";
+        }
+
+        public bool AddManga( MangaValues entry )
+        {
+            NameValueCollection post = new NameValueCollection();
+
+            post.Add("id", entry.id.ToString());
+            post.Add("data", EncodeMangaUpdateEntry(entry).OuterXml);
+
+            string str = GetWebData("https://myanimelist.net/api/mangalist/add/" + entry.id.ToString() + ".xml", post);
+            return str == "Created";
+        }
+        public bool UpdateManga( MangaValues entry )
+        {
+            NameValueCollection post = new NameValueCollection();
+
+            post.Add("id", entry.id.ToString());
+            post.Add("data", EncodeMangaUpdateEntry(entry).OuterXml);
+
+            string str = GetWebData("https://myanimelist.net/api/mangalist/update/" + entry.id.ToString() + ".xml", post);
+            return str == "Updated";
+        }
+        public bool DeleteManga( int id )
+        {
+            NameValueCollection post = new NameValueCollection();
+
+            post.Add("id", id.ToString());
+
+            string str = GetWebData("https://myanimelist.net/api/mangalist/delete/" + id.ToString() + ".xml", post);
+            return str == "Deleted";
+        }
 
         //Meta
         public override string ToString()
         {
-            return "MyAnimeList (unofficial) Web API";
+            return "MyAnimeList (unofficial) REST API C# wrapper";
         }
     }
 }
