@@ -10,26 +10,31 @@ namespace MalAPI
 {
     public struct Entry
     {
-        public string id, title, english, synonyms, episodes, chapters, volumes, score, type, status, start_date, end_date, synopsis, image;
+        public int id, episodes, chapters, volumes;
+        public float score;
+        public string title, type, english, synonyms, status, start_date, end_date, synopsis, image;
     }
     public struct ProgressEntry
     {
         //Duplicates of the main listing with some data missing
         //Stored since there appears to be no way to search the database with id
         //unused: english, score, synopsis
-        public string id, title, english, synonyms, episodes, score, type, status, start_date, end_date, synopsis, image, chapters, volumes;
+        public int id, type, episodes, status;
+        public string title, english, synonyms, start_date, end_date, synopsis, image, chapters, volumes;
 
         //Main data
-        public string my_id, my_watched_episodes, my_start_date, my_finish_date, my_score, my_status, my_rewatching, my_rewatching_ep, my_last_updated, my_tags, my_read_chapters, my_read_volumes, my_rereading, my_rereading_chap;
+        public int my_id, my_watched_episodes, my_score, my_status, my_rewatching_ep, my_read_chapters, my_read_volumes, my_rereading_chap;
+        public string my_start_date, my_finish_date, my_rewatching, my_last_updated, my_tags, my_rereading;
     }
     public struct UserInfo
     {
-        public string userid, username;
-        public string user_watching_anime, user_completed_anime, user_onhold_anime, user_dropped_anime, user_plantowatch_anime;
-        public string user_reading_manga, user_completed_manga, user_onhold_manga, user_dropped_manga, user_plantoread_manga;
+        public int userid;
+        public string username;
+        public int user_watching_anime, user_completed_anime, user_onhold_anime, user_dropped_anime, user_plantowatch_anime;
+        public int user_reading_manga, user_completed_manga, user_onhold_manga, user_dropped_manga, user_plantoread_manga;
 
-        public string user_days_spent_watching;
-        public string user_days_spent_reading;
+        public float user_days_spent_watching;
+        public float user_days_spent_reading;
     }
     public struct AnimeValues
     {
@@ -122,22 +127,22 @@ namespace MalAPI
                 for (int i=0; i<nodes.Count; i++)
                 {
                     Entry ent = new Entry();
-                    ent.id = nodes[i].SelectSingleNode("id").InnerText;
+                    ent.id = int.Parse( nodes[i].SelectSingleNode("id").InnerText );
                     ent.title = nodes[i].SelectSingleNode("title").InnerText;
                     ent.english = nodes[i].SelectSingleNode("english").InnerText;
                     ent.synonyms = nodes[i].SelectSingleNode("synonyms").InnerText;
 
                     if (type == "manga")
                     {
-                        ent.chapters = nodes[i].SelectSingleNode("chapters").InnerText;
-                        ent.volumes = nodes[i].SelectSingleNode("volumes").InnerText;
+                        ent.chapters = int.Parse(nodes[i].SelectSingleNode("chapters").InnerText);
+                        ent.volumes = int.Parse(nodes[i].SelectSingleNode("volumes").InnerText);
                     }
                     else
                     {
-                        ent.episodes = nodes[i].SelectSingleNode("episodes").InnerText;
+                        ent.episodes = int.Parse(nodes[i].SelectSingleNode("episodes").InnerText);
                     }
 
-                    ent.score = nodes[i].SelectSingleNode("score").InnerText;
+                    ent.score = float.Parse(nodes[i].SelectSingleNode("score").InnerText);
                     ent.type = nodes[i].SelectSingleNode("type").InnerText;
                     ent.status = nodes[i].SelectSingleNode("status").InnerText;
                     ent.start_date = nodes[i].SelectSingleNode("start_date").InnerText;
@@ -169,15 +174,15 @@ namespace MalAPI
                     //Global data
                     if (type == "manga")
                     {
-                        entry.id = nodes[i].SelectSingleNode("series_mangadb_id").InnerText;
+                        entry.id = int.Parse(nodes[i].SelectSingleNode("series_mangadb_id").InnerText);
                     }
                     else
                     {
-                        entry.id = nodes[i].SelectSingleNode("series_animedb_id").InnerText;
+                        entry.id = int.Parse(nodes[i].SelectSingleNode("series_animedb_id").InnerText);
                     }
                     entry.title = nodes[i].SelectSingleNode("series_title").InnerText;
                     entry.synonyms = nodes[i].SelectSingleNode("series_synonyms").InnerText;
-                    entry.type = nodes[i].SelectSingleNode("series_type").InnerText;
+                    entry.type = int.Parse(nodes[i].SelectSingleNode("series_type").InnerText);
 
                     if (type == "manga")
                     {
@@ -186,38 +191,38 @@ namespace MalAPI
                     }
                     else
                     {
-                        entry.episodes = nodes[i].SelectSingleNode("series_episodes").InnerText;
+                        entry.episodes = int.Parse(nodes[i].SelectSingleNode("series_episodes").InnerText);
                     }
 
-                    entry.status = nodes[i].SelectSingleNode("series_status").InnerText;
+                    entry.status = int.Parse(nodes[i].SelectSingleNode("series_status").InnerText);
                     entry.start_date = nodes[i].SelectSingleNode("series_start").InnerText;
                     entry.end_date = nodes[i].SelectSingleNode("series_end").InnerText;
                     entry.image = nodes[i].SelectSingleNode("series_image").InnerText;
 
                     //User data
-                    entry.my_id = nodes[i].SelectSingleNode("my_id").InnerText;
+                    entry.my_id = int.Parse(nodes[i].SelectSingleNode("my_id").InnerText);
                     if (type == "manga")
                     {
-                        entry.my_read_chapters = nodes[i].SelectSingleNode("my_read_chapters").InnerText;
-                        entry.my_read_volumes = nodes[i].SelectSingleNode("my_read_volumes").InnerText;
+                        entry.my_read_chapters = int.Parse(nodes[i].SelectSingleNode("my_read_chapters").InnerText);
+                        entry.my_read_volumes = int.Parse(nodes[i].SelectSingleNode("my_read_volumes").InnerText);
                     }
                     else
                     {
-                        entry.my_watched_episodes = nodes[i].SelectSingleNode("my_watched_episodes").InnerText;
+                        entry.my_watched_episodes = int.Parse(nodes[i].SelectSingleNode("my_watched_episodes").InnerText);
                     }
                     entry.my_start_date = nodes[i].SelectSingleNode("my_start_date").InnerText;
                     entry.my_finish_date = nodes[i].SelectSingleNode("my_finish_date").InnerText;
-                    entry.my_score = nodes[i].SelectSingleNode("my_score").InnerText;
-                    entry.my_status = nodes[i].SelectSingleNode("my_status").InnerText;
+                    entry.my_score = int.Parse(nodes[i].SelectSingleNode("my_score").InnerText);
+                    entry.my_status = int.Parse(nodes[i].SelectSingleNode("my_status").InnerText);
                     if (type == "manga")
                     {
                         entry.my_rereading = nodes[i].SelectSingleNode("my_rereadingg").InnerText;
-                        entry.my_rereading_chap = nodes[i].SelectSingleNode("my_rereading_chap").InnerText;
+                        entry.my_rereading_chap = int.Parse(nodes[i].SelectSingleNode("my_rereading_chap").InnerText);
                     }
                     else
                     {
                         entry.my_rewatching = nodes[i].SelectSingleNode("my_rewatching").InnerText;
-                        entry.my_rewatching_ep = nodes[i].SelectSingleNode("my_rewatching_ep").InnerText;
+                        entry.my_rewatching_ep = int.Parse(nodes[i].SelectSingleNode("my_rewatching_ep").InnerText);
                     }
                     entry.my_last_updated = nodes[i].SelectSingleNode("my_last_updated").InnerText;
                     entry.my_tags = nodes[i].SelectSingleNode("my_tags").InnerText;
@@ -394,25 +399,25 @@ namespace MalAPI
             XmlDocument xml = GetDocument("https://myanimelist.net/malappinfo.php?u=" + this.user + "&status=all&type=anime");
             if (xml != null)
             {
-                info.userid = xml.SelectSingleNode("/myanimelist/myinfo/user_id").InnerText;
+                info.userid = int.Parse(xml.SelectSingleNode("/myanimelist/myinfo/user_id").InnerText);
                 info.username = xml.SelectSingleNode("/myanimelist/myinfo/user_name").InnerText;
 
-                info.user_watching_anime = xml.SelectSingleNode("/myanimelist/myinfo/user_watching").InnerText;
-                info.user_completed_anime = xml.SelectSingleNode("/myanimelist/myinfo/user_completed").InnerText;
-                info.user_onhold_anime = xml.SelectSingleNode("/myanimelist/myinfo/user_onhold").InnerText;
-                info.user_dropped_anime = xml.SelectSingleNode("/myanimelist/myinfo/user_dropped").InnerText;
-                info.user_plantowatch_anime = xml.SelectSingleNode("/myanimelist/myinfo/user_plantowatch").InnerText;
-                info.user_days_spent_watching = xml.SelectSingleNode("/myanimelist/myinfo/user_days_spent_watching").InnerText;
+                info.user_watching_anime = int.Parse(xml.SelectSingleNode("/myanimelist/myinfo/user_watching").InnerText);
+                info.user_completed_anime = int.Parse(xml.SelectSingleNode("/myanimelist/myinfo/user_completed").InnerText);
+                info.user_onhold_anime = int.Parse(xml.SelectSingleNode("/myanimelist/myinfo/user_onhold").InnerText);
+                info.user_dropped_anime = int.Parse(xml.SelectSingleNode("/myanimelist/myinfo/user_dropped").InnerText);
+                info.user_plantowatch_anime = int.Parse(xml.SelectSingleNode("/myanimelist/myinfo/user_plantowatch").InnerText);
+                info.user_days_spent_watching = float.Parse(xml.SelectSingleNode("/myanimelist/myinfo/user_days_spent_watching").InnerText);
             }
             xml = GetDocument("https://myanimelist.net/malappinfo.php?u=" + this.user + "&status=all&type=manga");
             if (xml != null)
             {
-                info.user_reading_manga = xml.SelectSingleNode("/myanimelist/myinfo/user_reading").InnerText;
-                info.user_completed_manga = xml.SelectSingleNode("/myanimelist/myinfo/user_completed").InnerText;
-                info.user_onhold_manga = xml.SelectSingleNode("/myanimelist/myinfo/user_onhold").InnerText;
-                info.user_dropped_manga = xml.SelectSingleNode("/myanimelist/myinfo/user_dropped").InnerText;
-                info.user_plantoread_manga = xml.SelectSingleNode("/myanimelist/myinfo/user_plantoread").InnerText;
-                info.user_days_spent_reading = xml.SelectSingleNode("/myanimelist/myinfo/user_days_spent_watching").InnerText;
+                info.user_reading_manga = int.Parse(xml.SelectSingleNode("/myanimelist/myinfo/user_reading").InnerText);
+                info.user_completed_manga = int.Parse(xml.SelectSingleNode("/myanimelist/myinfo/user_completed").InnerText);
+                info.user_onhold_manga = int.Parse(xml.SelectSingleNode("/myanimelist/myinfo/user_onhold").InnerText);
+                info.user_dropped_manga = int.Parse(xml.SelectSingleNode("/myanimelist/myinfo/user_dropped").InnerText);
+                info.user_plantoread_manga = int.Parse(xml.SelectSingleNode("/myanimelist/myinfo/user_plantoread").InnerText);
+                info.user_days_spent_reading = float.Parse(xml.SelectSingleNode("/myanimelist/myinfo/user_days_spent_watching").InnerText);
             }
 
             return info;
