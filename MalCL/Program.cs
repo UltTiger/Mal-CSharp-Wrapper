@@ -22,7 +22,7 @@ namespace MalCL
             List<Entry> data = api.SearchAnime("bleach");
 
             if (data.Count > 0)
-                Console.WriteLine("first name: " + data[0].title);
+                Console.WriteLine("first name: " + data[0].title + " START: " + data[0].start_date + " END: " + data[0].end_date);
 
             List<ProgressEntry> watchData = api.GetUserListAnime();
             if (watchData.Count > 0)

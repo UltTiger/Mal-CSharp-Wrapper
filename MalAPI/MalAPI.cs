@@ -8,6 +8,34 @@ using System.Collections.Specialized;
 
 namespace MalAPI
 {
+    public enum ItemType
+    {
+        Anime,
+        Manga
+    }
+    public enum ItemStatus
+    {
+        WatchingOrReading,
+        Complete,
+        OnHold,
+        Dropped,
+        PlanToWatchOrRead
+    }
+    public enum ItemScore
+    {
+        Zero,
+        Appalling,
+        Horrible,
+        VeryBad,
+        Bad,
+        Average,
+        Fine,
+        Good,
+        VeryGood,
+        Great,
+        Masterpiece
+    }
+
     public struct Entry
     {
         public int id, episodes, chapters, volumes;
@@ -45,7 +73,7 @@ namespace MalAPI
         public int times_rewatched, rewatch_value;
         public string date_start, date_finish;
         public int priority;
-        public int enable_discussion, enable_rewatching;
+        public bool enable_discussion, enable_rewatching;
         public string comments, tags;
     }
     public struct MangaValues
@@ -55,7 +83,7 @@ namespace MalAPI
         public int chapter, volume, status, score, times_reread, reread_value;
         public string date_start, date_finish;
         public int priority;
-        public int enable_discussion, enable_rereading;
+        public bool enable_discussion, enable_rereading;
         public string comments, scan_group, tags;
         public int retail_volumes;
     }
@@ -216,7 +244,7 @@ namespace MalAPI
                     entry.my_status = int.Parse(nodes[i].SelectSingleNode("my_status").InnerText);
                     if (type == "manga")
                     {
-                        entry.my_rereading = nodes[i].SelectSingleNode("my_rereadingg").InnerText;
+                        entry.my_rereading = nodes[i].SelectSingleNode("my_rereadingg").InnerText; //The original XML has this spelling mistake
                         entry.my_rereading_chap = int.Parse(nodes[i].SelectSingleNode("my_rereading_chap").InnerText);
                     }
                     else
